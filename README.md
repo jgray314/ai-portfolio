@@ -14,6 +14,6 @@ Code and tools by Jess Gray — a working portfolio of AI-native projects.
   - [Time and cost reported with their limits](https://github.com/jgray314/jscc/blob/main/scripts/active_time.py) — an active-time estimate from commit history that prints its own bias.
   - [Working an AI coding agent like a junior engineer, not a ghostwriter](https://github.com/jgray314/jscc/blob/main/docs/lessons-learned.md) — slice-sized handoffs, a false impression about where the time went that got checked rather than published, and a list of the specific ways AI-written tests can pass while proving nothing.
 
-  The [JSCC README](https://github.com/jgray314/jscc#start-here-five-things-worth-reading-first) has the same list with more detail.
+  The [JSCC README](https://github.com/jgray314/jscc#start-here-six-things-worth-reading-first) has the same list with more detail.
 
 More coming soon.
