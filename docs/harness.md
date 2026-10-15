@@ -10,7 +10,7 @@ The honest summary: the advisory layer catches most things, and every time a rul
 
 | Concern | Mechanical | Advisory |
 |---|---|---|
-| Constrain behavior | `commit-msg` hook (no AI trailer, proof line on Critical/High fixes), subagent guard hook, structural safety in JSCC (sanitizer, mode isolation) | Coding-preferences file, per-project `CLAUDE.md`, Explore-only reviewers |
+| Constrain behavior | `commit-msg` hook (no AI trailer, proof line on Critical/High fixes), subagent guard hook, structural safety in JSCC (sanitizer, mode isolation) | Coding-preferences file, per-project `AGENTS.md`, Explore-only reviewers |
 | Maintain context | Plan, decision, changelog and gate docs in the repo, `FEATURES.json` and generated `PROGRESS.md`, claims pinned by tests | Daily running log |
 | Stop premature victory | Harness-controlled `passing` state, eval pass thresholds in code, mutation-verified guards | "Never claim a pass you did not run", retrospective step |
 | Verify work | CI, `pre-push` hook, scanner, record/replay evals, feature-list check | `/pre-commit-check`, two-lens gate review |
@@ -18,7 +18,7 @@ The honest summary: the advisory layer catches most things, and every time a rul
 
 ## 1. Constrain agent behavior
 
-**Instruction layers.** A personal instruction file loaded into every session. A separate coding-preferences file states how to work: scope, plan, execute, verify; product decisions are mine and arrive as numbered options; two failed attempts at the same thing and the agent stops; a check-in every three to five actions so I can redirect early; smallest change that works; real implementations only, no mocks that fake a pass. Each repo has a short `CLAUDE.md` with run and verify commands, its hard rules and links to topic docs, so a fresh session can start from the repo alone.
+**Instruction layers.** A personal instruction file loaded into every session. A separate coding-preferences file states how to work: scope, plan, execute, verify; product decisions are mine and arrive as numbered options; two failed attempts at the same thing and the agent stops; a check-in every three to five actions so I can redirect early; smallest change that works; real implementations only, no mocks that fake a pass. Each repo has a short `AGENTS.md` with run and verify commands, its hard rules and links to topic docs, so a fresh session can start from the repo alone.
 
 One giant instruction file fails, so the always-on file stays short and points elsewhere, and recurring workflows are skills, not paragraphs in it.
 
@@ -74,7 +74,7 @@ The failure to guard against is an agent saying "done" because the diff looks ri
 
 ## Starting a project: the initialization phase
 
-A new project does setup only in its first session, with no feature code until an acceptance checklist is ticked: one setup command, pinned runtime, frozen lockfile, a passing example test, lint and format clean, CI running the same commands as the local check, the hooks installed, a feature list whose verify commands exist, a short `CLAUDE.md`, and a fresh-session test (a new session with only the repo can say what the project is, how to run and verify it, and where it stands). A scaffold script writes the template, the hooks and the runner in one command. This exists because both projects reached CI late (about commit 90 of 160 in JSCC, commit 160 of 180 in the browser project), and the linter found real bugs the day it landed.
+A new project does setup only in its first session, with no feature code until an acceptance checklist is ticked: one setup command, pinned runtime, frozen lockfile, a passing example test, lint and format clean, CI running the same commands as the local check, the hooks installed, a feature list whose verify commands exist, a short `AGENTS.md`, and a fresh-session test (a new session with only the repo can say what the project is, how to run and verify it, and where it stands). A scaffold script writes the template, the hooks and the runner in one command. This exists because both projects reached CI late (about commit 90 of 160 in JSCC, commit 160 of 180 in the browser project), and the linter found real bugs the day it landed.
 
 ## Auditing the harness
 
@@ -85,7 +85,7 @@ A new project does setup only in its first session, with no feature code until a
 | Failure layer | First place to look here |
 |---|---|
 | Task specification | The feature's behavior and verify command in `FEATURES.json`. No verify command means the step is not specified yet. |
-| Context provision | `CLAUDE.md`, plan doc, ADRs, the changelog's current phase |
+| Context provision | `AGENTS.md`, plan doc, ADRs, the changelog's current phase |
 | Execution environment | CI config, lockfile, the pinned runtime |
 | Verification feedback | The hooks, CI, and the gate's "verified clean" list |
 | State management | `PROGRESS.md`, daily log, gate doc dispositions |
@@ -94,7 +94,7 @@ A new project does setup only in its first session, with no feature code until a
 
 Stated so the page does not oversell the setup.
 
-- **Hooks are per clone.** `core.hooksPath` is local git config. A fresh clone runs no hooks until `git config core.hooksPath .githooks` is run once, which `CLAUDE.md` and the scaffold both say. CI runs the same checks as a backstop.
+- **Hooks are per clone.** `core.hooksPath` is local git config. A fresh clone runs no hooks until `git config core.hooksPath .githooks` is run once, which `AGENTS.md` and the scaffold both say. CI runs the same checks as a backstop.
 - **`--no-verify` exists.** The hooks make skipping a checks step visible, not impossible. The rule is that a bypass gets said out loud.
 - **The feature-list seal is friction, not security.** An agent that reads the runner could recompute it. The control is review and the hook, not cryptography.
 - **The subagent guard is a backstop with a known hole.** It blocks git-state changes from a subagent in a main checkout. It does not catch a subagent editing files there; the first control is spawning reviewers as read-only Explore agents.
