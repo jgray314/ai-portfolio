@@ -16,4 +16,8 @@ Code and tools by Jess Gray — a working portfolio of AI-native projects.
 
   The [JSCC README](https://github.com/jgray314/jscc#start-here-six-things-worth-reading-first) has the same list with more detail.
 
+## How these are built
+
+- [**The harness behind these projects**](docs/harness.md) — the rules, hooks, review gates and memory around the AI coding agent, organized by five harness-engineering concerns, with what is enforced by tools versus asked of the agent, and the known gaps.
+
 More coming soon.
