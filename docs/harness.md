@@ -11,7 +11,7 @@ The honest summary: the advisory layer catches most things, and every time a rul
 | Concern | Mechanical | Advisory |
 |---|---|---|
 | Constrain behavior | `commit-msg` hook (no AI trailer, proof line on Critical/High fixes), subagent guard hook, structural safety in JSCC (sanitizer, mode isolation) | Coding-preferences file, per-project `AGENTS.md`, Explore-only reviewers |
-| Maintain context | Plan, decision, changelog and gate docs in the repo, `FEATURES.json` and generated `PROGRESS.md`, claims pinned by tests | Daily running log |
+| Maintain context | Plan, decision, changelog and gate docs in the repo, claims and links pinned by tests | Daily running log |
 | Stop premature victory | Harness-controlled `passing` state, eval pass thresholds in code, mutation-verified guards | "Never claim a pass you did not run", retrospective step |
 | Verify work | CI, `pre-push` hook, scanner, record/replay evals, feature-list check | `/pre-commit-check`, two-lens gate review |
 | Observable runtime | Call ledger and cost report in JSCC, CI status script | Gate-doc audit trail |
@@ -33,7 +33,7 @@ One giant instruction file fails, so the always-on file stays short and points e
 
 **The repo is the system of record.** Plans, decisions (ADRs with rejected alternatives), changelogs and gate documents are files in the project, so a new session can reconstruct state from the tree instead of a chat. Changelogs are compacted one phase behind, so the record stays readable.
 
-**A feature list and a generated progress file.** `FEATURES.json` holds each unit of scope with its observable behavior, a verification command and a state. `PROGRESS.md` is generated from it, never hand-edited. A new session reads both and knows what is done, in progress, blocked and next.
+**A verification ledger, not a roadmap.** `FEATURES.json` holds check gates and controls, each with its observable behavior, a verification command and a state; `PROGRESS.md` is generated from it and never hand-edited. I tested whether this carries continuity by withholding both files from a fresh agent: it still answered all five onboarding questions, from the Status tables in the docs, and gave a fuller account of what was open. So the ledger is where "is it verified" lives. Product progress and open work live in the README and the project's Status table.
 
 **A running log.** Every session appends timestamped one-line entries to a daily note. It is the continuity layer across interruptions.
 
@@ -88,7 +88,7 @@ A new project does setup only in its first session, with no feature code until a
 | Context provision | `AGENTS.md`, plan doc, ADRs, the changelog's current phase |
 | Execution environment | CI config, lockfile, the pinned runtime |
 | Verification feedback | The hooks, CI, and the gate's "verified clean" list |
-| State management | `PROGRESS.md`, daily log, gate doc dispositions |
+| State management | README and project Status table, daily log, gate doc dispositions (`PROGRESS.md` for verification state only) |
 
 ## Known gaps
 
