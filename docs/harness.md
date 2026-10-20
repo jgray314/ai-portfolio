@@ -71,7 +71,7 @@ The failure to guard against is an agent saying "done" because the diff looks ri
 - **Honest reporting of cost and time.** An active-time estimate from commit history prints its own bias.
 - **A CI status script** that reads the latest run per repo and says whether it matches the local HEAD, because the GitHub CLI is not installed.
 - **Gate documents** as an append-only audit trail of what was found, what closed it and with what proof.
-- **An end-of-session clean-state check.** `features.py clean` verifies the feature list, runs the full check, looks for debug leftovers in the diff, and warns about uncommitted changes and extra worktrees. A session is not finished until it passes or says why not.
+- **An end-of-session clean-state check.** `features.py clean` verifies the feature list, runs the full check, runs the project's standard startup command, reports the CI result for the pushed commit (advisory), looks for debug leftovers in the diff, and warns about uncommitted changes and extra worktrees. A session is not finished until it passes or says why not. The startup check, the CI report and the per-dimension record of which check failed were added after comparing this check with the clean-state lecture of Learn Harness Engineering.
 
 ## Starting a project: the initialization phase
 
