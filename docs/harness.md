@@ -2,7 +2,7 @@
 
 The projects in this portfolio were built with AI coding agents. This page describes the working system around the agent, not the agent: the rules, files, hooks and review steps that make its output checkable.
 
-This setup came from my own professional experience, and I built it before reading anything formal on the subject. It is organized by five concerns that [Learn Harness Engineering](https://walkinglabs.github.io/learn-harness-engineering/en/) also lays out, which supports the choices after the fact: constrain behavior, maintain context, stop premature victory, verify work, make the runtime observable. Each section says what exists, whether it is **mechanical** (enforced by a tool whoever is typing) or **advisory** (a rule an agent is asked to follow), and where it has failed.
+This setup came from my own professional experience, and I built it before reading anything formal on the subject. It is organized by five concerns that [Learn Harness Engineering](https://walkinglabs.github.io/learn-harness-engineering/en/) also lays out, which supports the choices after the fact: constrain behavior, maintain context, stop premature victory, verify work, make the runtime observable. I have since used those lectures to find gaps (feature-list scope, observability) and close some of them. Each section says what exists, whether it is **mechanical** (enforced by a tool whoever is typing) or **advisory** (a rule an agent is asked to follow), and where it has failed.
 
 The honest summary: the advisory layer catches most things, and every time a rule was broken twice it was promoted to a mechanical one. A review of the commit history in October 2026 checked this claim and found it only partly true, which is why the second half of this page exists.
 
@@ -14,7 +14,7 @@ The honest summary: the advisory layer catches most things, and every time a rul
 | Maintain context | Plan, decision, changelog and gate docs in the repo, claims and links pinned by tests | Daily running log |
 | Stop premature victory | Harness-controlled `passing` state, an initialization gate before any feature work, eval pass thresholds in code, mutation-verified guards | "Never claim a pass you did not run", retrospective step |
 | Verify work | CI, `pre-push` hook (same gates as CI, tested for equality), scanner, type checks, record/replay evals, feature-list check | `/pre-commit-check`, two-lens gate review |
-| Observable runtime | Call ledger and cost report in JSCC, CI status script | Gate-doc audit trail |
+| Observable runtime | Call ledger and cost report in JSCC, harness event log, CI status script | Gate-doc audit trail |
 
 ## 1. Constrain agent behavior
 
@@ -67,6 +67,7 @@ The failure to guard against is an agent saying "done" because the diff looks ri
 ## 5. Make the runtime observable
 
 - **JSCC's call ledger.** Every model call is recorded at the call site with cost, latency, and a failure marker, so spend and failed calls are visible instead of inferred. A billed call whose response failed to parse used to write nothing; the rule now is that nothing that can fail after money is spent belongs inside the instrumented function.
+- **A harness event log.** Every feature-list command, every commit-message hook pass or rejection, and every subagent-guard block appends one line to a gitignored `.harness/events.jsonl`. Before this, a control that never tripped and a control that was never wired looked identical, and the commit-history review had to be reconstructed from commit subjects. A failed write never affects the control. Six tests cover it. Added after comparing this setup with the observability lecture of Learn Harness Engineering. It is new and has not yet been used in a harness audit.
 - **Honest reporting of cost and time.** An active-time estimate from commit history prints its own bias.
 - **A CI status script** that reads the latest run per repo and says whether it matches the local HEAD, because the GitHub CLI is not installed.
 - **Gate documents** as an append-only audit trail of what was found, what closed it and with what proof.
@@ -107,4 +108,7 @@ Stated so the page does not oversell the setup.
 - **Evals are small.** Case counts are sized against measured noise but remain tens of cases, and a prompt tuned against its own fixtures is a known risk the gate method calls out.
 - **Scope is a written rule, not a check.** Every `AGENTS.md` says to stay inside the active feature, but nothing compares a diff to the paths a parallel lane was given. Leaks across lanes have happened (a change to a shared renderer reached screens the plan said were unchanged), and plan review now checks for them in advance. A diff-scope check is deferred until a leak recurs despite that.
 - **The browser project's end-to-end checks skip its most cross-cutting paths.** Its headless UX checks seed puzzles with a stored solver verdict, so image upload, the solver worker, and backup and save-file round trips are covered by unit tests and manual steps only. Its "only the store touches `localStorage`" contract holds, but nothing enforces it. Both are backlogged with triggers. A harness review in October 2026 found these, and also that most test failure messages say where something broke but not how to fix it. Naming the fix is now a standing rule and an audit step.
+- **Bypassing the hooks leaves no trace.** `--no-verify` skips the hook that would log it. The only detection is a pushed commit with no matching check event.
+- **Nothing records agent activity.** There are no lane start or end times, no per-lane cost and no tool-level trace. They are deferred until a lane failure needs them. CI results are not stored per commit either; the status script reads them live.
+- **Gate reviews have no rubric, and lane briefs are not contracts.** Findings are ranked by severity but not scored against graded criteria, and no template requires a brief to state scope, must-pass commands and what is out of scope. Both are queued as trials.
 - **Type checking is enforced, strictness and coverage are not.** JSCC runs mypy at default settings and the browser project type-checks its JavaScript with `tsc` in non-strict mode and with no suppression comments, both in the hook and in CI. JSCC's strict mode is a per-module ratchet still to come. Coverage is reported in CI but not gated, and the threshold is undecided.
